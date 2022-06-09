@@ -9,29 +9,41 @@
 
 
 function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta) 
+
         %%  Water Dielectric constant and field reflection coefficients
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    
     E_Water = E_water(temp, salinity, frequency);
     raw12 = field_reflection_coefficient(sqrt(E_air), sqrt(E_oil));                 
     raw23  = field_reflection_coefficient(sqrt(E_oil), sqrt(E_Water));
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
+     
         %%  Phase shift & Reflectivity
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     delta = (2*pi*10^9*sqrt(E_oil)*thickness*10^(-3))/(3*10^8);
     delta = transpose(frequency).*delta;
     num = (raw12.^2 + transpose(raw23.^2)  + 2*raw12.*transpose(raw23).*cos(2.*delta));
     denum = 1 + transpose((raw12.*raw23).^2)+2*raw12.*transpose(raw23).*cos(2.*delta);
     R = num./denum;
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
     
         %% Coherent Reflectivity
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     R = R.*exp(-4*((ks*cosd(theta))^2));
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
 end
 
 function r = field_reflection_coefficient(dielectric_constant1, dielectric_constant2)
+
     r = (dielectric_constant1 - dielectric_constant2)./(dielectric_constant1 + dielectric_constant2);
+    
 end
