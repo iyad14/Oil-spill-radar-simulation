@@ -1,3 +1,4 @@
+%%  M                       --> number of scans
 %%  frequency               --> frequencies used given (in GHz)
 %%  measured_reflectivity   --> Reflectivitis measured by drone (in dB scale)
 %%  ks                      -->  Surface roughness
@@ -14,7 +15,7 @@
 
 
 
-function scatterplot(frequency, measured_reflectivity, ks, thickness_step, t, variance, trials, E_oil, E_air, temp, salinity, theta)
+function [error, probability_of_error] = scatterplot(M, frequency, ks, thickness_step, t, variance, trials, E_oil, E_air, temp, salinity, theta)
         
     clf;                                    % clear figures
     thickness = 0:thickness_step:10;        % thickness over which the reflectivities will be calculated
@@ -30,19 +31,12 @@ function scatterplot(frequency, measured_reflectivity, ks, thickness_step, t, va
         %% Generating the random reflectivities with given frequencies and at a given thickness to test the frequencies
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
-    noise = sqrt(variance)*randn(length(frequency), trials);
-    [~, indexOfThickness] = min(thickness-t);
+    noise = sqrt(variance)*randn(length(frequency), trials, M);
+    [~, indexOfThickness] = min(abs(thickness-t));
     noisy_reflectivities = 10*log10(abs(theoretical_reflectivity(:, indexOfThickness) + noise));
+    noisy_reflectivities = sum(noisy_reflectivities, 3)/M;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    
-        %% Finding the point closest to the measured reflectivity
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    position = minimum_euclidean_distance(frequency, measured_reflectivity, ks, thickness_step, E_oil, E_air, temp, salinity, theta);
-    [~, indexOfThickness] = min(abs(thickness-position));
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
     
     
      %% Plotting
@@ -53,11 +47,9 @@ function scatterplot(frequency, measured_reflectivity, ks, thickness_step, t, va
         % 2D Scatter plots 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
        
-        hold on;
         scatter(noisy_reflectivities(1, :), noisy_reflectivities(2, :), 'x');
+        hold on;
         scatter(10*log10(abs(theoretical_reflectivity(1, :))), 10*log10(abs(theoretical_reflectivity(2, :))), '.');
-        scatter(measured_reflectivity(1), measured_reflectivity(2), 'x', 'black');
-        scatter(10*log10(theoretical_reflectivity(1, indexOfThickness)), 10*log10(theoretical_reflectivity(2, indexOfThickness)));
         grid on;
         hold off;
         xlim([-8 0]);
@@ -73,11 +65,9 @@ function scatterplot(frequency, measured_reflectivity, ks, thickness_step, t, va
         
         scatter3(noisy_reflectivities(1, :), noisy_reflectivities(2, :), noisy_reflectivities(3, :), 'x');
         hold on;
-        scatter3(10*log10(abs(theoretical_reflectivity(1, :))), 10*log10(abs(theoretical_reflectivity(2, :))), 10*log10(abs(theoretical_reflectivity(3, :))), '.');
-        scatter3(measured_reflectivity(1), measured_reflectivity(2), measured_reflectivity(3), 'x', 'black');
-        scatter3(10*log10(theoretical_reflectivity(1, indexOfThickness)), 10*log10(theoretical_reflectivity(2, indexOfThickness)), 10*log10(theoretical_reflectivity(3, indexOfThickness)));
+        scatter3(10*log10(abs(theoretical_reflectivity(1, :))), 10*log10(abs(theoretical_reflectivity(2, :))), 10*log10(abs(theoretical_reflectivity(3, :))), '.');   
         grid on;
-        
+        hold off;   
         xlim([-8 0]);
         xlabel(strcat("Reflectivity(dB)@", num2str(frequency(1)), "GHz"));
         ylim([-8 0]);
@@ -87,17 +77,35 @@ function scatterplot(frequency, measured_reflectivity, ks, thickness_step, t, va
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
        
-        
+    end    
+    
+    
         %% Histograms 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-
-    h1 = minimum_euclidean_distance(frequency, noisy_reflectivities, ks, thickness_step, E_oil, E_air, temp, salinity, theta);
-    figure;
-    histogram(h1);
+ 
+%     h = double.empty;
+%     for i = 1:1:length(noisy_reflectivities)
+%         h(i) = minimum_euclidean_distance(frequency, transpose(noisy_reflectivities(:, i)), ks, thickness_step, E_oil, E_air, temp, salinity, theta);
+%     end
+%     histogram(h);
+%     xlim([0 10]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-    end
+    
+          %% Error & Percentage of correctness caclulations
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    %%%Calculate the error!!!!!!!!!!!!!!!!!!!!!!!!
+                         
+    
+    % Percentage of correctness
+    %Number_of_correctly_estimated_thickness = y(indexOfThickness);                                                                  % find the number of correctly estimated thicknesses        
+    %probability_of_error = (length(noisy_reflectivities) - Number_of_correctly_estimated_thickness)/length(noisy_reflectivities)    %divide wrong estimations by total estimations
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
