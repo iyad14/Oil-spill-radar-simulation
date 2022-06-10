@@ -20,9 +20,14 @@ function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     delta = (2*pi*10^9*sqrt(E_oil)*thickness*10^(-3))/(3*10^8);
     delta = transpose(frequency).*delta;
-    num = (raw12.^2 + transpose(raw23.^2)  + 2*raw12.*transpose(raw23).*cos(2.*delta));
-    denum = 1 + transpose((raw12.*raw23).^2)+2*raw12.*transpose(raw23).*cos(2.*delta);
-    R = num./denum;
+%     num = (raw12.^2 + transpose(raw23.^2)  + 2*raw12.*transpose(raw23).*cos(2.*delta));
+%     denum = 1 + transpose((raw12.*raw23).^2)+2*raw12.*transpose(raw23).*cos(2.*delta);
+%     R = num./denum;
+   
+    num = raw12*exp(1i*delta) + transpose(raw23).*exp(-1i*delta);
+    denum = exp(1i*delta) + (raw12 .* transpose(raw23) .* exp(-1i*delta));
+    R = abs(num./denum).^2;
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
         %% Coherent Reflectivity

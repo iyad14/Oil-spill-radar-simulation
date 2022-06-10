@@ -40,4 +40,4 @@ function E = E_water(temp, salinity, f)
     epsr = real(eps);
     epsi = imag(eps);
  
-    E = epsr + epsi*1i;
+    E = epsr - epsi*1i;              % According to Microwave Radar and Radiometric Remote Sensing by David Gardner Long , Fawwaz T. Ulaby p.124
