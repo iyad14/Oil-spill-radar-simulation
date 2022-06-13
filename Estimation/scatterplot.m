@@ -93,6 +93,7 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
         h(i) = minimum_euclidean_distance(frequency, transpose(noisy_reflectivities(:, i)), ks, thickness_step, E_oil, E_air, temp, salinity, theta);
     end
     s = histogram(h);
+    f = histcounts(h);
     xlim([0 11]);
     ylim([0 750]);  %remove
     

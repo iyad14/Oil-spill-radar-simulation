@@ -1,34 +1,23 @@
+%%  measured_reflecitivity  --> reflectivities collected (linear scale)
 %%  M                       --> Number of scans
 %%  frequency               --> frequencies used given (in GHz)
 %%  ks                      --> Surface roughness
-%%  thickness_step          --> Thickness resolution (in mm)
 %%  variance                --> Noise variance
-%%  trials                  --> Quantity of noisy reflectivity values needed to be generated
-%%  E_oil                   --> Dielectric constant of oil
 %%  E_air                   --> Dielectric constant of air
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
 %%
 
-function probability_of_detection = Detection_probability(measured_reflectivity, M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta)
-    tic
-    thickness = 1:thickness_step:10;      %thickness over which the reflectivities will be calculated
-    
-    
-        %%  Calculate reflectivities for given frequencies, thicknesses, and surface roughness
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    
-    theoretical_reflectivity = measured_reflectivity;
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+function probability_of_detection = Detection_probability(measured_reflectivity, M, frequency, ks, variance, E_air, temp, salinity, theta)
+   
+
     
         %%  Dielectric constant of water at given frequencies & water reflectivity values at a given surface roughness ks
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     E_water_prob = E_water(temp, salinity, frequency);
-    R_water = ones(size(theoretical_reflectivity)) * ((sqrt(E_air) - sqrt(E_water_prob))/(sqrt(E_air) + sqrt(E_water_prob)))^2;
+    R_water = ones(size(measured_reflectivity)) * ((sqrt(E_air) - sqrt(E_water_prob))/(sqrt(E_air) + sqrt(E_water_prob)))^2;
     R_water = abs(coherent_reflectivity(R_water, ks, theta));
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,22 +25,16 @@ function probability_of_detection = Detection_probability(measured_reflectivity,
     
         %%  Generating noise 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
+    trials = 3000;          % Quantity of noisy reflectivity values needed to be generated
     
-    % First dimension  : thickness values
-    % Second dimension : Noise values
-    % Third dimension  : Number of scans (M)
+    % First & Second dimension  : image resolution
+    % Third dimension  : number of frequencies used
     % Fourth dimension : Frequencies at which the scans are done
     
     % generates random values based on the given variance
-    noise = sqrt(variance) * randn(length(theoretical_reflectivity), size(theoretical_reflectivity, 1), length(frequency), trials, M); 
-    
-    % transpose the theoretical reflectivity to add the reflectivity values to the noise generated (each reflecctivity for its correspondant thickness)
-    %A = transpose(abs(theoretical_reflectivity));  
-    
-    % reshape the reflectivity values to suit the dimensions of the noise
-    % matrix
-    %A = reshape(theoretical_reflectivity , [length(theoretical_reflectivity), size(theoretical_reflectivity, 1), trials, length(frequency), M]);
-    
+    noise = sqrt(variance) * randn(length(measured_reflectivity), size(measured_reflectivity, 1), length(frequency), trials, M); 
+  
     % Add the reflectivity values to the noise matrix, thus getting the noisy reflectivity values to be studied 
     noisy_reflectivity = noise + measured_reflectivity;
     

@@ -23,7 +23,7 @@ function t = minimum_euclidean_distance(frequency, measured_reflectivity, ks, th
         %% Finding the point closest to the measured reflectivity
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    distance = sqrt(sum((theoretical_reflectivity-transpose(measured_reflectivity)).^2, 1));
+    distance = sqrt(sum((theoretical_reflectivity-transpose(10*log10(measured_reflectivity))).^2, 1));
     [~ , indexOfThickness] = min(distance);
     t = thickness(indexOfThickness);
 
