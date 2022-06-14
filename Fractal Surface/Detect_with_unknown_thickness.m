@@ -9,10 +9,11 @@
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
 %%
 
-function h1 = Detect_with_unknown_thickness(measured_reflectivities, M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
+function probability_of_detection = Detect_with_unknown_thickness(measured_reflectivities, M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
    
+    pW = 0.5;
     thickness = tmin:thickness_step:tmax;      %thickness over which the reflectivities will be calculated
-    R_oil = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta) .* ones(size(measured_reflectivities));
+    R_oil = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta);
     
         %%  Dielectric constant of water at given frequencies & water reflectivity values at a given surface roughness ks
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,17 +23,31 @@ function h1 = Detect_with_unknown_thickness(measured_reflectivities, M, frequenc
     R_water = abs(coherent_reflectivity(R_water, ks, theta));
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+    trials = 1000;
+    pO = probability(M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, tmax) ;
     
-    
-
-    % columns --> thickness, rows -- >  frequency, 3d --> M
-    for i = 1:1:length(thickness)
-        h1(i) = pdf("Normal", measured_reflectivities(i), R_oil(i), sqrt(variance));
-        h2(i) = pdf("Normal", measured_reflectivities(i), R_water, sqrt(variance));
+    for m = 1:1:M      
+            h1(:, :, m) = pdf("Normal", transpose(measured_reflectivities(m, :)), R_oil, sqrt(variance));
+            h2(:, :, m) = pdf("Normal", transpose(measured_reflectivities(m, :)), R_water, sqrt(variance));
     end
+  
+    plot(h1(1, :, 1))
+    hold on
+    plot(h2(1, :, 1))
+    
+    h1 = h1.*pO;
+    h2 = h2*pW;
+    
+    x = sum(h1, 2)/length(R_oil);
+    y = sum(h2, 2);
+    
+    x = prod(x, 3);
+    y = prod(y, 3);
+    
+    x = prod(x, 1);
+    y = prod(y, 1);
 
-    probability_of_detection = prod(prod(sum(h1, 2), 3), 1)/ prod(prod(sum(h2, 2), 3), 1);
+    probability_of_detection = x/y;
      
  
 end
