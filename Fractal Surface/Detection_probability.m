@@ -7,9 +7,10 @@
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
+%%  tmin & tmax             --> minimum and maximum value for thikness range
 %%
 
-function probability_of_detection = Detection_probability(R_oil, M, frequency, ks, variance, E_air, temp, salinity, theta)
+function probability_of_detection = Detection_probability(R_oil, M, frequency, ks, variance, E_air, temp, salinity, theta, tmin, tmax)
    
 
     

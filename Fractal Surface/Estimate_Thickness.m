@@ -9,14 +9,12 @@
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)
+%%  tmin & tmax             --> minimum and maximum value for thikness range
 %%
 
 
+function thicknesses = Estimate_Thickness(measured_reflectivity, M, frequency, ks, thickness_step, variance,E_oil, E_air, temp, salinity, theta, tmin, tmax)
 
-function thicknesses = Estimate_Thickness(measured_reflectivity, M, frequency, ks, thickness_step, variance,E_oil, E_air, temp, salinity, theta)
-
-
-    clf;    % clear figures
     
     
         %% Simulate the M observations
@@ -33,18 +31,15 @@ function thicknesses = Estimate_Thickness(measured_reflectivity, M, frequency, k
         %% Estimation & Histogram
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    figure;
     thicknesses = double.empty;
     
     %   use minimum euclidean distance to find estimate the thickness on
     %   each reflectvity value collected
     for j = 1:1:size(measured_reflectivity,2)
         for i = 1:1:size(measured_reflectivity, 1)
-            thicknesses(i, j) = minimum_euclidean_distance(frequency, measured_reflectivity(i, j), ks, thickness_step, E_oil, E_air, temp, salinity, theta);
+            thicknesses(i, j) = minimum_euclidean_distance(frequency, measured_reflectivity(i, j), ks, thickness_step, E_oil, E_air, temp, salinity, theta, tmin, tmax);
         end
     end
-    histogram(thicknesses);
-    xlim([0 11]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

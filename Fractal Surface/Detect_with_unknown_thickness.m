@@ -23,7 +23,7 @@ function probability_of_detection = Detect_with_unknown_thickness(measured_refle
     R_water = abs(coherent_reflectivity(R_water, ks, theta));
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    trials = 1000;
+    trials = 5000;
     pO = probability(M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, tmax) ;
     
     for m = 1:1:M      
@@ -38,11 +38,10 @@ function probability_of_detection = Detect_with_unknown_thickness(measured_refle
     h1 = h1.*pO;
     h2 = h2*pW;
     
-    x = sum(h1, 2)/length(R_oil);
-    y = sum(h2, 2);
+    x = sum(h1, 2)/10;
     
     x = prod(x, 3);
-    y = prod(y, 3);
+    y = prod(h2, 3);
     
     x = prod(x, 1);
     y = prod(y, 1);
