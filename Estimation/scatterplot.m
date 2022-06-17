@@ -15,10 +15,10 @@
 
 
 
-function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot(M, frequency, ks, thickness_step, t, variance, trials, E_oil, E_air, temp, salinity, theta)
+function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot(M, frequency, ks, t, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
         
     clf;                                    % clear figures
-    thickness = 0:thickness_step:10;        % thickness over which the reflectivities will be calculated
+    thickness = tmin:thickness_step:tmax;        % thickness over which the reflectivities will be calculated
     
     
         %% Creating the theoretical curve by which the measured reflectivities are compared
