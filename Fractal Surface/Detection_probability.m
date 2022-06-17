@@ -10,7 +10,7 @@
 %%  tmin & tmax             --> minimum and maximum value for thikness range
 %%
 
-function probability_of_detection = Detection_probability(R_oil, M, frequency, ks, variance, E_air, temp, salinity, theta, tmin, tmax)
+function Detection = Detection_probability(R_oil, M, frequency, ks, variance, E_air, temp, salinity, theta, tmin, tmax)
    
 
     
@@ -60,7 +60,7 @@ function probability_of_detection = Detection_probability(R_oil, M, frequency, k
     result = gt(x, y);
     
     % Divide by the total number of trials to find the probability
-    probability_of_detection(:, :) = sum(result, 4)/trials;
+    Detection(:, :) = sum(result, 4)/trials;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     

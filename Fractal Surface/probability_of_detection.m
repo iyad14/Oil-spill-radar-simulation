@@ -12,7 +12,7 @@
 %%
 
 function probability_of_detection = probability(M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, tmax)
-    tic
+
     thickness = tmin:thickness_step:tmax;      %thickness over which the reflectivities will be calculated
     
     
@@ -62,8 +62,8 @@ function probability_of_detection = probability(M, frequency, ks, thickness_step
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Calculate the probabilty density functions
-    h1 = pdf("Normal", noisy_reflectivity, A, variance);                                    % Oil
-    h2 = pdf("Normal", noisy_reflectivity, abs(R_water_fprob_planar(1,1)), variance);       % Water
+    h1 = pdf("Normal", noisy_reflectivity, A, sqrt(variance));                                    % Oil
+    h2 = pdf("Normal", noisy_reflectivity, abs(R_water_fprob_planar(1,1)), sqrt(variance));       % Water
     
     % Multiply the pdf values at all frequencies(f) and scans(M)
     x = prod(h1, 4);
