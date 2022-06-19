@@ -33,10 +33,10 @@ function oil_found = Detect_with_unknown_thickness(measured_reflectivity, M, fre
     % Fourth dimension : Frequencies at which the scans are done
     
     % generates random values based on the given variance
-    noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_reflectivity, 2), M); 
+    noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_reflectivity, 2), M, length(thickness)); 
   
     % Add the reflectivity values to the noise matrix, thus getting the noisy reflectivity values to be studied 
-    noisy_reflectivity = noise + measured_reflectivity;
+    noisy_reflectivity = noise + reshape(measured_reflectivity;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
