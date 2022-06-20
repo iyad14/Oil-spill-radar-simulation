@@ -52,11 +52,10 @@ function oil_found = Detect_with_unknown_thickness(measured_reflectivity, M, fre
  
     % Multiply the pdf values at all frequencies(f) and scans(M)
     x = prod(x, 3);
-    y = prod(h2, 3);
+    y = prod(h2, 3)*0.5;
     
     x = prod(x, 1);
     y = prod(y, 1);
-
     
     if x/y >= 1
         oil_found = 1;
