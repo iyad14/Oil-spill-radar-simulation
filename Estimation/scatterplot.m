@@ -24,7 +24,7 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
         %% Creating the theoretical curve by which the measured reflectivities are compared
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
-    theoretical_reflectivity = abs(reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta)); 
+    R_oil = abs(reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta)); 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
@@ -34,8 +34,29 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
     
     noise = sqrt(variance)*randn(length(frequency), trials, M);
     [~, indexOfThickness] = min(abs(thickness-t));
-    noisy_reflectivities = 10*log10(abs(theoretical_reflectivity(:, indexOfThickness) + noise));
+    noisy_reflectivities = 10*log10(abs(R_oil(:, indexOfThickness) + noise));
     noisy_reflectivities = sum(noisy_reflectivities, 3)/M;
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    
+    
+     %% Plotting regions
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    
+    SymbolSet = zeros(size(R_oil,2),1);
+    SymbolSet(:,1)= 10*log10(R_oil(1,:).');
+    SymbolSet(:,2)= 10*log10(R_oil(2,:).');
+    [NumOfSignal, dim] = size(SymbolSet);
+    ProbSet = ones(1,NumOfSignal)/NumOfSignal; % probability of each symbol
+    No = 2;
+    %Generate the Decision Region Diagram of the input Signal Symbol Set
+    figure; hold on
+    SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No);
+    hold on;
+    plot(SymbolSet(:,1),SymbolSet(:,2));
+    xlabel('Reflectivity at f = 11 GHz');
+    ylabel('Reflectivity at f = 4.5 GHz');
+
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
@@ -50,7 +71,7 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
        
         scatter(noisy_reflectivities(1, :), noisy_reflectivities(2, :), 'x');
         hold on;
-        scatter(10*log10(abs(theoretical_reflectivity(1, :))), 10*log10(abs(theoretical_reflectivity(2, :))), '.');
+        scatter(10*log10(abs(R_oil(1, :))), 10*log10(abs(R_oil(2, :))), '.');
         grid on;
         hold off;
         xlim([-8 0]);
@@ -67,7 +88,7 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
         
         scatter3(noisy_reflectivities(1, :), noisy_reflectivities(2, :), noisy_reflectivities(3, :), 'x');
         hold on;
-        scatter3(10*log10(abs(theoretical_reflectivity(1, :))), 10*log10(abs(theoretical_reflectivity(2, :))), 10*log10(abs(theoretical_reflectivity(3, :))), '.');   
+        scatter3(10*log10(abs(R_oil(1, :))), 10*log10(abs(R_oil(2, :))), 10*log10(abs(R_oil(3, :))), '.');   
         grid on;
         hold off;   
         xlim([-8 0]);

@@ -11,9 +11,9 @@
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
 %%
 
-function probability_of_detection(M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta)
-    tic
-    thickness = 1:thickness_step:10;      %thickness over which the reflectivities will be calculated
+function probability_of_detection = probability(M, frequency, ks, thickness_step, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, tmax)
+
+    thickness = tmin:thickness_step:tmax;      %thickness over which the reflectivities will be calculated
     
     
         %%  Calculate reflectivities for given frequencies, thicknesses, and surface roughness
@@ -62,8 +62,8 @@ function probability_of_detection(M, frequency, ks, thickness_step, variance, tr
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Calculate the probabilty density functions
-    h1 = pdf("Normal", noisy_reflectivity, A, variance);                                    % Oil
-    h2 = pdf("Normal", noisy_reflectivity, abs(R_water_fprob_planar(1,1)), variance);       % Water
+    h1 = pdf("Normal", noisy_reflectivity, A, sqrt(variance));                                    % Oil
+    h2 = pdf("Normal", noisy_reflectivity, abs(R_water_fprob_planar(1,1)), sqrt(variance));       % Water
     
     % Multiply the pdf values at all frequencies(f) and scans(M)
     x = prod(h1, 4);
@@ -81,15 +81,6 @@ function probability_of_detection(M, frequency, ks, thickness_step, variance, tr
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     
-        %% Probability plot
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    plot(thickness, probability_of_detection);
-    grid on;
-    xlabel("Thickness (mm)");
-    ylabel("Probability of detection");
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 end
 

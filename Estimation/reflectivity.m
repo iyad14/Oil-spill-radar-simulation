@@ -9,6 +9,8 @@
 
 
 function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta) 
+    
+
         %%  Water Dielectric constant and field reflection coefficients
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     E_Water = E_water(temp, salinity, frequency);
