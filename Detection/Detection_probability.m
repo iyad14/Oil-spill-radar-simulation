@@ -1,17 +1,24 @@
 %%  measured_reflecitivity  --> reflectivities collected (linear scale)
+%%  t                       --> thickness at which the detection is desired
 %%  M                       --> Number of scans
 %%  frequency               --> frequencies used given (in GHz)
 %%  ks                      --> Surface roughness
 %%  variance                --> Noise variance
+%%  E_oil                   --> Oil Dielectric constant
 %%  E_air                   --> Dielectric constant of air
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
 %%  tmin & tmax             --> minimum and maximum value for thikness range
+%%  thcikness_step          --> thickness resolution    
 %%
 
 function oil_found = Detection_probability(measured_reflectivity, t,  M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
 
+    % Changes in cases of witnesses
+    pO = 0.5;   % Assuming p(O) = 0.5
+    pW = 0.5;   % Assuming p(W) = 0.5   
+    
     thickness = tmin:thickness_step:tmax;      %thickness over which the reflectivities will be calculated
 
 
@@ -44,7 +51,8 @@ function oil_found = Detection_probability(measured_reflectivity, t,  M, frequen
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    % Finding index of thickness
+    % Finding index of thickness to which the measured reflectivity will be
+    % compared
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     [~,indexOfThickness] = min(abs(thickness - t));
@@ -61,13 +69,14 @@ function oil_found = Detection_probability(measured_reflectivity, t,  M, frequen
     h2 = pdf("Normal", noisy_reflectivity, R_water, sqrt(variance));                                  % Water
 
     % Multiply the pdf values at all frequencies(f) and scans(M)
-    x = prod(h1, 3);
-    y = prod(h2, 3);
+    x = prod(h1, 3) * pO;          
+    y = prod(h2, 3) * pW;         
 
     x = prod(x, 1);
     y = prod(y, 1);
 
-    % Check if oil probability is greater than that of water
+    % Check if oil probability is greater than that of water and thus
+    % decide the output
     oil_found = gt(x, y);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
