@@ -10,7 +10,7 @@
 %%  tmin & tmax             --> minimum and maximum value for thikness range
 %%
 
-function oil_found = Detection_probability(measured_reflectivity, t,  M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
+function Detection = Detection_probability(measured_reflectivity, M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
 
     thickness = tmin:thickness_step:tmax;      %thickness over which the reflectivities will be calculated
 
@@ -27,7 +27,7 @@ function oil_found = Detection_probability(measured_reflectivity, t,  M, frequen
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     E_water_prob = E_water(temp, salinity, frequency);
-    R_water = ((sqrt(E_air) - sqrt(E_water_prob))/(sqrt(E_air) + sqrt(E_water_prob)))^2;
+    R_water = ones(size(R_oil)) * ((sqrt(E_air) - sqrt(E_water_prob))/(sqrt(E_air) + sqrt(E_water_prob)))^2;
     R_water = abs(coherent_reflectivity(R_water, ks, theta));
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,38 +37,33 @@ function oil_found = Detection_probability(measured_reflectivity, t,  M, frequen
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % generates random values based on the given variance
-    noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_reflectivity, 2), M);
+    noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_re, 2), M);
 
     % Add the reflectivity values to the noise matrix, thus getting the noisy reflectivity values to be studied
-    noisy_reflectivity = noise + measured_reflectivity;
+    noisy_reflectivity = noise + R_oil;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    % Finding index of thickness
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    [~,indexOfThickness] = min(abs(thickness - t));
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    
 
     %%  Probability of detection calculation
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     % Calculate the probabilty density functions
-    h1 = pdf("Normal", noisy_reflectivity, R_oil(:, indexOfThickness), sqrt(variance));                                    % Oil
-    h2 = pdf("Normal", noisy_reflectivity, R_water, sqrt(variance));                                  % Water
+    h1 = pdf("Normal", measured_reflectivity, R_oil, sqrt(variance));                                    % Oil
+    h2 = pdf("Normal", measured_reflectivity, R_water, sqrt(variance));                                  % Water
 
     % Multiply the pdf values at all frequencies(f) and scans(M)
-    x = prod(h1, 3);
-    y = prod(h2, 3);
+    x = prod(h1, 5);
+    y = prod(h2, 5);
 
-    x = prod(x, 1);
-    y = prod(y, 1);
+    x = prod(x, 3);
+    y = prod(y, 3);
 
-    % Check if oil probability is greater than that of water
-    oil_found = gt(x, y);
+    % Check how many oil pdf values are greater than water pdf values
+    result = gt(x, y);
+
+    % Divide by the total number of trials to find the probability
+    Detection(:, :) = sum(result, 4)/trials;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
