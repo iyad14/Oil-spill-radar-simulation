@@ -1,17 +1,20 @@
 %%  frequency               --> frequencies used given (in GHz)
 %%  measured_reflectivity   --> Reflectivitis measured by drone (in dB scale)
 %%  ks                      -->  Surface roughness
-%%  thickness_step          --> Thickness resolution (in mm)
 %%  E_oil                   --> Dielectric constant of oil
 %%  E_air                   --> Dielectric constant of air
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)
+%%  tmin & tmax             --> minimum and maximum value for thikness range
+%%  thickness_step          --> Thickness resolution (in mm)
+%%
 
 
-function t = minimum_euclidean_distance(frequency, measured_reflectivity, ks, thickness_step, E_oil, E_air, temp, salinity, theta)
+
+function t = minimum_euclidean_distance(measured_reflectivity, frequency, ks, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
     
-    thickness = 0:thickness_step:10;    %thickness over which the reflectivities will be calculated
+    thickness = tmin:thickness_step:tmax;    %thickness over which the reflectivities will be calculated
 
         %% Creating the theoretical curve by which the measured reflectivities are compared
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

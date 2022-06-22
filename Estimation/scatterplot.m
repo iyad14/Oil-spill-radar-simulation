@@ -17,7 +17,7 @@
 
 function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot(M, frequency, ks, t, variance, trials, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
         
-    clf;                                    % clear figures
+    clf;                                         % clear figures
     thickness = tmin:thickness_step:tmax;        % thickness over which the reflectivities will be calculated
     
     
@@ -40,27 +40,7 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
     
-     %% Plotting regions
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    
-    SymbolSet = zeros(size(R_oil,2),1);
-    SymbolSet(:,1)= 10*log10(R_oil(1,:).');
-    SymbolSet(:,2)= 10*log10(R_oil(2,:).');
-    [NumOfSignal, dim] = size(SymbolSet);
-    ProbSet = ones(1,NumOfSignal)/NumOfSignal; % probability of each symbol
-    No = 2;
-    %Generate the Decision Region Diagram of the input Signal Symbol Set
-    figure; hold on
-    SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No);
-    hold on;
-    plot(SymbolSet(:,1),SymbolSet(:,2));
-    xlabel('Reflectivity at f = 11 GHz');
-    ylabel('Reflectivity at f = 4.5 GHz');
-
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-    
-    
+     
      %% Plotting
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     
@@ -69,6 +49,26 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
         % 2D Scatter plots 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
        
+            %% Plotting regions
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%s%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+        SymbolSet = zeros(size(R_oil,2),1);
+        SymbolSet(:,1)= 10*log10(R_oil(1,:).');
+        SymbolSet(:,2)= 10*log10(R_oil(2,:).');
+        [NumOfSignal, ~] = size(SymbolSet);
+        ProbSet = ones(1,NumOfSignal)/NumOfSignal; % probability of each symbol
+        No = 2;
+        %Generate the Decision Region Diagram of the input Signal Symbol Set
+        hold on;
+        SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No);
+        hold on;
+        plot(SymbolSet(:,1),SymbolSet(:,2));
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+        
+        % Noise Scattering
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+        
         scatter(noisy_reflectivities(1, :), noisy_reflectivities(2, :), 'x');
         hold on;
         scatter(10*log10(abs(R_oil(1, :))), 10*log10(abs(R_oil(2, :))), '.');
@@ -111,12 +111,11 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
     figure;
     h = double.empty;
     for i = 1:1:length(noisy_reflectivities)
-        h(i) = minimum_euclidean_distance(frequency, transpose(noisy_reflectivities(:, i)), ks, thickness_step, E_oil, E_air, temp, salinity, theta);
+        h(i) = minimum_euclidean_distance(transpose(noisy_reflectivities(:, i)), frequency, ks, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax);
     end
     s = histogram(h);
-    f = histcounts(h);
-    xlim([0 11]);
-    ylim([0 750]);  %remove
+    xlim([tmin tmax+1]);
+
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -133,11 +132,11 @@ function [Estimated_thickness, MaximumError, probability_of_error] = scatterplot
     
     
     % Probability of error
-    hist_thickness = s.BinEdges - s.BinWidth/2;                 % Find the centers of the bins created which represent each thickness
-    hist_thickness(1) = [];                                     % Delete the first element since it represents nothing ( first binEdge-binWidth/2)
-    [~, indexOfActualThickness] = min(abs(t- hist_thickness));        % Find the index of the actual thickness
-    Number_of_correctly_estimated_thickness = s.Values(indexOfActualThickness);                                                                  % find the number of correctly estimated thicknesses        
-    probability_of_error = (length(noisy_reflectivities) - Number_of_correctly_estimated_thickness)/length(noisy_reflectivities);           %divide wrong estimations by total estimations
+    hist_thickness = s.BinEdges - s.BinWidth/2;                                                                                         % Find the centers of the bins created which represent each thickness
+    hist_thickness(1) = [];                                                                                                             % Delete the first element since it represents nothing ( first binEdge-binWidth/2)
+    [~, indexOfActualThickness] = min(abs(t- hist_thickness));                                                                          % Find the index of the actual thickness
+    Number_of_correctly_estimated_thickness = s.Values(indexOfActualThickness);                                                         % find the number of correctly estimated thicknesses        
+    probability_of_error = (length(noisy_reflectivities) - Number_of_correctly_estimated_thickness)/length(noisy_reflectivities);       %divide wrong estimations by total estimations
     
     % Estimated thickness
     [~, indexOfEstimatedThickness] = max(s.Values); 

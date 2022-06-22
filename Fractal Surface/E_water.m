@@ -1,4 +1,10 @@
+%%  temp                    --> Temperature of water (Degrees Celsius)
+%%  salinity                --> Salinity of water (ppt)
+%%  f                       --> frequencies used given in GHz
+%%
+
 function E = E_water(temp, salinity, f)
+
     %frequency is given in GHz
     t = temp;
     S = salinity;
@@ -41,3 +47,5 @@ function E = E_water(temp, salinity, f)
     epsi = imag(eps);
  
     E = epsr - epsi*1i;              % According to Microwave Radar and Radiometric Remote Sensing by David Gardner Long , Fawwaz T. Ulaby p.124
+    
+end

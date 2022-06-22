@@ -27,7 +27,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
     %    sum(ProbSet) < 1
     %    display('total probability of the symbol is not equal to one !')
     %    return;
-    %end;
+    %end
 
     
     [NumOfSignal, dim] = size(SymbolSet);
@@ -91,9 +91,9 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                 Bdry_S_CoorSet(i, j, 2) = Bdry_SlopeSet(i, j) * DiagBdry_min(1) + Bdry_Y_IntcpSet(i, j);
                 Bdry_E_CoorSet(i, j, 2) = Bdry_SlopeSet(i, j) * DiagBdry_max(1) + Bdry_Y_IntcpSet(i, j);
             
-            end;
-        end;
-    end;
+            end
+        end
+    end
 
     
     %Calculate the intercept of each pair of boundary lines of a signal for all
@@ -134,11 +134,11 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         else
                             Intcp_y = Bdry_SlopeSet(i, j) * Intcp_x + Bdry_Y_IntcpSet(i, j);
                             
-                        end;
+                        end
                         
-                    end;
+                    end
                     
-                end;
+                end
                 
                 
                 u = strcat('Intcp_x_', num2str(i), '_', num2str(j));
@@ -149,9 +149,9 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                 u = strcat(u, '_', num2str(i), '_', num2str(k));
                 eval([u ' = Intcp_y;']);
                 
-            end;
-        end;
-    end;
+            end
+        end
+    end
 
     
     %Cut the boundary line by vector method
@@ -227,13 +227,13 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                     vector_1 = [0, 1];
                 else
                     vector_1 = [1, Bdry_SlopeSet(i, j)];
-                end;
+                end
                 
                 if(Bdry_SlopeSet(i, k) == Inf)
                     vector_2 = [0, 1];
                 else
                     vector_2 = [1, Bdry_SlopeSet(i, k)];
-                end;
+                end
                 
                 %Calculate the Angle and Supplement Angle between the two boundary vectors
                 %By Dot Product Equation: v.u = |v||u|cos(a), 0 <= a <= pi
@@ -305,8 +305,8 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S1ToIntcp > Dist_E1ToIntcp)
                             Bdry_S_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
                             Bdry_E_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
-                        end;
-                    end;
+                        end
+                    end
                     
                     if(Dist_S2ToE2 > 0)
                         %if(vS2ToInt_E2ToInt_angle == pi)
@@ -317,7 +317,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S2ToIntcp > Dist_E2ToIntcp)
                             Bdry_S_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
                             Bdry_E_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
-                        end;
+                        end
                     end
                     
                 %end
@@ -333,7 +333,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S1ToIntcp < Dist_E1ToIntcp)
                             Bdry_S_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
                             Bdry_E_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
-                        end;
+                        end
                     end
                     
                     if(Dist_S2ToE2 > 0)
@@ -345,7 +345,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S2ToIntcp < Dist_E2ToIntcp)
                             Bdry_S_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
                             Bdry_E_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
-                        end;
+                        end
                     end
                 
                 %end
@@ -361,8 +361,8 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S1ToIntcp < Dist_E1ToIntcp)
                             Bdry_S_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
                             Bdry_E_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
-                        end;
-                    end;
+                        end
+                    end
                     
                     if(Dist_S2ToE2 > 0)
                         if(Dist_S2ToE2 > Dist_E2ToIntcp)
@@ -373,7 +373,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S2ToIntcp > Dist_E2ToIntcp)
                             Bdry_S_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
                             Bdry_E_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
-                        end;
+                        end
                     end
                  
                 %end
@@ -390,7 +390,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S1ToIntcp > Dist_E1ToIntcp)
                             Bdry_S_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
                             Bdry_E_CoorSet(i, j, :) = Bdry_CoorSet(i, j, :);
-                        end;
+                        end
                     end
                     
                     if(Dist_S2ToE2 > 0)
@@ -402,15 +402,15 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                         elseif(Dist_S2ToIntcp < Dist_E2ToIntcp)
                             Bdry_S_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
                             Bdry_E_CoorSet(i, k, :) = Bdry_CoorSet(i, k, :);
-                        end;
+                        end
                     end
                     
-                end;
+                end
                 
                 %%}
-            end;
-        end;
-    end;
+            end
+        end
+    end
     
     
     %Draw the resultant boundary lines
@@ -420,19 +420,19 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                 continue;
             end
             
-            switch i
-                case 1
-                    color = 'r';
-                    
-                case 2
-                    color = 'g';
-                    
-                case 3
-                    color = 'b';
-                    
-                case 4
-                    color = 'k';
-            end
+%             switch i
+%                 case 1
+%                     color = 'r';
+%                     
+%                 case 2
+%                     color = 'g';
+%                     
+%                 case 3
+%                     color = 'b';
+%                     
+%                 case 4
+%                     color = 'k';
+%             end
             
             %{
             if(i == 1)
@@ -447,8 +447,10 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
             elseif(i == 4)
                 color = 'k';
                 
-            end;
+            end
             %}
+            
+            color = 'k';
             
             if(Bdry_SlopeSet(i, j) == Inf)
                 %line([Bdry_Y_IntcpSet;Bdry_Y_IntcpSet], [DiagBdry_min(2);DiagBdry_max(2)]);
@@ -461,7 +463,7 @@ function SignalSymbolDecisionRegionGenerator(SymbolSet, ProbSet, No)
                 plot(DiagBdry_x, DiagBdry_y, color);
                 %line([DiagBdry_min(1), DiagBdry_max(1)], [(Bdry_SlopeSet * DiagBdry_min(1) + Bdry_Y_IntcpSet), (Bdry_SlopeSet * DiagBdry_max(1) + Bdry_Y_IntcpSet)])
                 
-            end;
+            end
             
-        end;
-    end;
+        end
+    end

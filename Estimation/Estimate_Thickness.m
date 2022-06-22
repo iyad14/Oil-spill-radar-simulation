@@ -13,34 +13,30 @@
 %%
 
 
-function thicknesses = Estimate_Thickness(measured_reflectivity, M, frequency, ks, thickness_step, variance,E_oil, E_air, temp, salinity, theta, tmin, tmax)
+function Estimated_thicknesses = Estimate_Thickness(measured_reflectivity, M, frequency, ks,  variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
 
-    
-    
-        %% Simulate the M observations
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
-     % generate noise M times to simulate the collection of different observations
-     noise = sqrt(variance) * randn(length(measured_reflectivity), size(measured_reflectivity, 1), length(frequency), M); 
-     measured_reflectivity = abs(measured_reflectivity + noise);
-     measured_reflectivity = sum(measured_reflectivity, 4)/M;
- 
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    
-        %% Estimation & Histogram
+
+    %% Simulate the M observations
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    thicknesses = double.empty;
-    
+    % generate noise M times to simulate the collection of different observations
+    noise = sqrt(variance) * randn(size(measured_reflectivity, 2), size(measured_reflectivity, 1), length(frequency), M);
+    measured_reflectivity = abs(measured_reflectivity + noise);
+    measured_reflectivity = sum(measured_reflectivity, 4)/M;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %% Estimation & Histogram
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    Estimated_thicknesses = double.empty;
+
     %   use minimum euclidean distance to find estimate the thickness on
     %   each reflectvity value collected
     for j = 1:1:size(measured_reflectivity,2)
         for i = 1:1:size(measured_reflectivity, 1)
-            thicknesses(i, j) = minimum_euclidean_distance(frequency, measured_reflectivity(i, j), ks, thickness_step, E_oil, E_air, temp, salinity, theta, tmin, tmax);
+            Estimated_thicknesses(i, j) = minimum_euclidean_distance( 10*log10(abs(measured_reflectivity(i, j))), frequency, ks, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax);                                                        
         end
     end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 end

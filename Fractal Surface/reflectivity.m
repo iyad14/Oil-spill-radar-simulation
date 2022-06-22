@@ -1,11 +1,13 @@
 %%  frequency               --> frequencies used given in GHz
 %%  thickness               --> thickness range at which the system will operate (given in mm)
+%%  ks                      -->  Surface roughness
 %%  E_oil                   --> Dielectric constant of oil
 %%  E_air                   --> Dielectric constant of air
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (ppt)
-%%  ks                      -->  Surface roughness
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)
+%%
+
 
 
 function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity, theta) 
@@ -39,6 +41,3 @@ function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity
         
 end
 
-function r = field_reflection_coefficient(dielectric_constant1, dielectric_constant2)
-    r = (dielectric_constant1 - dielectric_constant2)./(dielectric_constant1 + dielectric_constant2);
-end
