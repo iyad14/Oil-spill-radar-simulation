@@ -29,7 +29,7 @@ function R = reflectivity(frequency, thickness, ks, E_oil, E_air, temp, salinity
     denum = exp(1i*delta) + (raw12 .* transpose(raw23) .* exp(-1i*delta));
     R = abs(num./denum).^2;
     
-     % Other equation for reflectivity
+     %% Other form of reflectivity equation 
     %     num = (raw12.^2 + transpose(raw23.^2)  + 2*raw12.*transpose(raw23).*cos(2.*delta));
     %     denum = 1 + transpose((raw12.*raw23).^2)+2*raw12.*transpose(raw23).*cos(2.*delta);
     %     R = num./denum;
