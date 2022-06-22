@@ -3,10 +3,13 @@
 %%  frequency               --> frequencies used given (in GHz)
 %%  ks                      --> Surface roughness
 %%  variance                --> Noise variance
+%%  E_oil                   --> Dielectric constant of oil 
 %%  E_air                   --> Dielectric constant of air
 %%  temp                    --> Temperature of water (Degrees Celsius)
 %%  salinity                --> Salinity of water (in ppt)
 %%  theta                   --> Incident angle of the electromagnetic wave to interface (given in degrees)]
+%%  tmin & tmax             --> minimum and maximum value for thikness range
+%%  thickness_step          --> Thickness resolution (in mm)
 %%
 
 function oil_found = Detect_with_unknown_thickness(measured_reflectivity, M, frequency, ks, variance, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax)
