@@ -22,7 +22,7 @@ function Estimated_thicknesses = Estimate_Thickness(measured_reflectivity, M, fr
 
     % generate noise M times to simulate the collection of different observations
     noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_reflectivity, 2), length(frequency), M);
-    measured_reflectivity = abs(measured_reflectivity + noise);
+    measured_reflectivity = measured_reflectivity + noise;
     measured_reflectivity = sum(measured_reflectivity, 4)/M;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,7 +31,7 @@ function Estimated_thicknesses = Estimate_Thickness(measured_reflectivity, M, fr
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     Estimated_thicknesses = double.empty;
-
+ 
     %   use minimum euclidean distance to find estimate the thickness on
     %   each reflectvity value collected
     for i = 1:1:size(measured_reflectivity, 1)
