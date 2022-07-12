@@ -36,9 +36,9 @@ function Estimated_thicknesses = Estimate_Thickness(measured_reflectivity, M, fr
     %   each reflectvity value collected
     for i = 1:1:size(measured_reflectivity, 1)
        for j = 1:1:size(measured_reflectivity, 2)
-        for k = 1:1:size(measured_reflectivity, 3)
-            ref = 10*log10(measured_reflectivity(i, j, :));
-            Estimated_thicknesses(i, j) = minimum_euclidean_distance(reshape(ref, [1, size(ref, 3)]), frequency, ks, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax);
+        for k = 1:1:size(measued_reflectivity, 3)
+            ref = 
+            Estimated_thickness(i, j) = minimum_euclidean_distance(reshape(), frequency, ks, E_oil, E_air, temp, salinity, theta, tmin, thickness_step, tmax);
         end
        end
     end
