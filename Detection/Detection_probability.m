@@ -46,7 +46,7 @@ function oil_found = Detection_probability(measured_reflectivity, t,  M, frequen
     % generates random values based on the given variance
     noise = sqrt(variance) * randn(size(measured_reflectivity, 1), size(measured_reflectivity, 2), M);
 
-    % Add the reflectivity values to the noise matrix, thus getting the noisy reflectivity values to be studied
+    % Add the reflectivity values to the noise matrix, thus getting the noisy reflecivity values to be studied
     noisy_reflectivity = noise + measured_reflectivity;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
