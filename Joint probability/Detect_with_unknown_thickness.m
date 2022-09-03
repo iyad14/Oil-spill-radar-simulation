@@ -48,14 +48,14 @@ function oil_found = Detect_with_unknown_thickness(measured_reflectivity, M, fre
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Calculate the probabilty density functions
-    h1 = pdf("Normal", noisy_reflectivity, R_oil, sqrt(variance));                                    % Oil
+    h1 = pdf("Normal", noisy_reflectivity, R_oil, sqrt(variance))/length(thickness);                                      % Oil
     h2 = pdf("Normal", noisy_reflectivity, R_water, sqrt(variance));                                                  % Water
    
-    x = sum(h1, 2)/length(h1);
- 
+    x = sum(h1, 2);
+    
     % Multiply the pdf values at all frequencies(f) and scans(M)
     x = prod(x, 3);
-    y = prod(h2, 3)*0.5;
+    y = prod(h2, 3);
     
     x = prod(x, 1);
     y = prod(y, 1);
